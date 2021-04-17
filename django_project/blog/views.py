@@ -2,7 +2,7 @@ from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.auth.models import User
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
-from .models import Post
+from .models import Post,CommentModel
 
 
 def home(request):
@@ -64,6 +64,17 @@ class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
 			return True
 		return False
 
+class PostCommentView(CreateView):
+        model = CommentModel
+        fields = ['name','body']
+        template_name = 'blog/addcomment.html'
+        
+        def form_valid(self, form):
+
+            form.instance.post_id = self.kwargs['pk']
+            return super().form_valid(form)
+
 
 def about(request):
 	return render(request,'blog/about.html',{'title':'About'})	
+
